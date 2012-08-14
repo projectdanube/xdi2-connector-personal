@@ -7,7 +7,7 @@ It can map personal data from the [Personal.com API](http://developer.personal.c
 
 ### Mapping
 
-* [Mapping]
+* [Mapping](https://github.com/peacekeeper/xdi2-connector-personal/wiki/Mapping)
 
 ### How to build
 
