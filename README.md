@@ -5,6 +5,10 @@ This is a connector module for the [XDI²](http://github.com/peacekeeper/xdi2) l
 
 It can map personal data from the [Personal.com API](http://developer.personal.com/faq) to XDI. 
 
+### Mapping
+
+* [[Mapping]]
+
 ### How to build
 
 Just run
