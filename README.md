@@ -1,5 +1,5 @@
-<img src="http://peacekeeper.github.com/xdi2/images/projectdanube_logo.png" align="right">
-<img src="http://peacekeeper.github.com/xdi2/images/logo64.png"><br>
+<img src="http://peacekeeper.github.com/xdi2/files/projectdanube_logo.png" align="right">
+<img src="http://peacekeeper.github.com/xdi2/files/logo64.png"><br>
 
 This is a connector module for the [XDI²](http://github.com/peacekeeper/xdi2) library.
 
