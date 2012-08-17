@@ -9,6 +9,7 @@ It can map personal data from the [Personal.com API](http://developer.personal.c
 
 * [Notes](https://github.com/peacekeeper/xdi2-connector-personal/wiki/Notes)
 * [Mapping](https://github.com/peacekeeper/xdi2-connector-personal/wiki/Mapping)
+* [Sequences](https://github.com/peacekeeper/xdi2-connector-personal/wiki/Sequences)
 
 ### How to build
 
