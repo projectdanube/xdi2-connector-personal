@@ -4,9 +4,9 @@ participant "XDI Client"
 participant "XDI2 Server"
 participant "XDI2 PersonalGemContributor"
 participant "Personal API"
-note over "XDI2 Server","XDI2 PersonalGemContributor": PersonalGemContributor enabled\nin XDI2 Server configuration file
+note over "XDI2 Server","XDI2 PersonalGemContributor": PersonalGemContributor is enabled\nin the XDI2 Server configuration file
 XDI Client->XDI2 Server: XDI $get Request to retrieve user's personal data
-note right of "XDI2 Server": Server decides to invoke\nthe PersonalGemContributor\nbased on the XDI Request
+note right of "XDI2 Server": XDI2 Server decides to invoke\nthe PersonalGemContributor\nbased on the XDI Request
 XDI2 Server->XDI2 PersonalGemContributor: Request for Contribution to XDI Graph
 note right of "XDI2 PersonalGemContributor": PersonalGemContributor reads\nthe OAuth access token\nfrom the user's graph
 XDI2 PersonalGemContributor->Personal API: Retrieve Gem Data
