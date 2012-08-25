@@ -11,8 +11,7 @@
 
 	<!-- XDI SERVLET -->
 
-	<bean id="EndpointServlet" class="xdi2.server.EndpointServlet"
-		init-method="init" destroy-method="destroy">
+	<bean id="EndpointServlet" class="xdi2.server.EndpointServlet" init-method="init" destroy-method="destroy">
 		<property name="interceptors">
 			<util:list>
 				<bean class="xdi2.server.interceptor.impl.DebugEndpointServletInterceptor" />
@@ -22,8 +21,6 @@
 
 	<!-- MESSAGING TARGET at /personal -->
 	<!-- MessagingTarget: GraphMessagingTarget backed by a MemoryGraph -->
-	<!-- Interceptors: VariablesInterceptor -->
-	<!-- Contributors: PersonalComNameGemContributor, PersonalComContactInfoGemContributor -->
 
 	<bean id="graphfactory1" class="xdi2.core.impl.memory.MemoryGraphFactory">
 	</bean>
