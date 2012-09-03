@@ -23,7 +23,7 @@ public class PersonalComNameGemContributor extends PersonalComAbstractContributo
 	}
 
 	@Override
-	public boolean get(XRI3Segment contextNodeXri, GetOperation operation, MessageResult messageResult, ExecutionContext executionContext) throws Xdi2MessagingException {
+	public boolean getContext(XRI3Segment contributorXri, XRI3Segment relativeContextNodeXri, XRI3Segment contextNodeXri, GetOperation operation, MessageResult messageResult, ExecutionContext executionContext) throws Xdi2MessagingException {
 
 		String contextNodeXriString = contextNodeXri.toString();
 		String literalData = null;
@@ -45,7 +45,7 @@ public class PersonalComNameGemContributor extends PersonalComAbstractContributo
 	}
 
 	@Override
-	public boolean modLiteral(XRI3Segment contextNodeXri, String literalData, ModOperation operation, MessageResult messageResult, ExecutionContext executionContext) throws Xdi2MessagingException {
+	public boolean modLiteral(XRI3Segment contributorXri, XRI3Segment relativeContextNodeXri, XRI3Segment contextNodeXri, String literalData, ModOperation operation, MessageResult messageResult, ExecutionContext executionContext) throws Xdi2MessagingException {
 
 		String contextNodeXriString = contextNodeXri.toString();
 
