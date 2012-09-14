@@ -1,4 +1,4 @@
-package xdi2.connector.facebook.util;
+package xdi2.connector.personal.util;
 
 import xdi2.core.ContextNode;
 import xdi2.core.Graph;
@@ -7,7 +7,7 @@ import xdi2.core.xri3.impl.XRI3Segment;
 
 public class GraphUtil {
 
-	private static final XRI3Segment XRI_FACEBOOK_OAUTH_TOKEN = new XRI3Segment("(https://facebook.com)=!1111$($oauth)$!($token)");
+	private static final XRI3Segment XRI_FACEBOOK_OAUTH_TOKEN = new XRI3Segment("(https://personal.com)=!1111$($oauth)$!($token)");
 
 	private GraphUtil() { }
 

@@ -1,4 +1,4 @@
-package xdi2.connector.facebook.contributor;
+package xdi2.connector.personal.contributor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,11 +8,11 @@ import org.json.JSONObject;
 import xdi2.messaging.target.ExecutionContext;
 
 /**
- * Methods for storing state related to the FacebookContributor.
+ * Methods for storing state related to the PersonalContributor.
  */
-public class FacebookContributorExecutionContext {
+public class PersonalContributorExecutionContext {
 
-	private static final String EXECUTIONCONTEXT_KEY_USERS_PER_MESSAGEENVELOPE = FacebookContributor.class.getCanonicalName() + "#userspermessageenvelope";
+	private static final String EXECUTIONCONTEXT_KEY_USERS_PER_MESSAGEENVELOPE = PersonalContributor.class.getCanonicalName() + "#userspermessageenvelope";
 
 	@SuppressWarnings("unchecked")
 	public static Map<String, JSONObject> getUsers(ExecutionContext executionContext) {

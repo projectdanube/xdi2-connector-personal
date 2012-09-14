@@ -11,8 +11,7 @@
 
 	<!-- XDI SERVLET -->
 
-	<bean id="EndpointServlet" class="xdi2.server.EndpointServlet"
-		init-method="init" destroy-method="destroy">
+	<bean id="EndpointServlet" class="xdi2.server.EndpointServlet" init-method="init" destroy-method="destroy">
 		<property name="interceptors">
 			<util:list>
 				<bean class="xdi2.server.interceptor.impl.DebugEndpointServletInterceptor" />
@@ -20,27 +19,29 @@
 		</property>
 	</bean>
 
+	<!-- PERSONAL CONNECTOR SERVLET -->
+
+	<bean id="ConnectServlet" class="xdi2.connector.personal.ConnectServlet" init-method="init" destroy-method="destroy">
+		<property name="graph" ref="graph1" />
+		<property name="personalApi" ref="personalApi" />
+	</bean>
+
+	<bean name="personalApi" class="xdi2.connector.personal.api.PersonalApi" init-method="init" destroy-method="destroy">
+		<property name="appId" value="420250631345354" />
+		<property name="appSecret" value="c2feeda99926ab3c6096beaa8e6eca73" />
+	</bean>
+
 	<!-- MESSAGING TARGET at /personal -->
 	<!-- MessagingTarget: GraphMessagingTarget backed by a MemoryGraph -->
-	<!-- Interceptors: VariablesInterceptor -->
-	<!-- Contributors: PersonalComNameGemContributor, PersonalComContactInfoGemContributor -->
 
 	<bean id="graphfactory1" class="xdi2.core.impl.memory.MemoryGraphFactory">
 	</bean>
 
 	<bean id="graph1" factory-bean="graphfactory1" factory-method="openGraph" />
 
-	<bean name="personalComApi" class="xdi2.connector.personal.personalcomapi.PersonalComApi" init-method="init">
-		<property name="apiKey" value="xyz" />
-		<!-- add other properties here that are necessary for accessing the Personal.com API -->
-	</bean>
-
-	<bean name="personalComNameGemContributor" class="xdi2.connector.personal.PersonalComNameGemContributor" init-method="init">
-		<property name="personalComApi" ref="personalComApi" />
-	</bean>
-
-	<bean name="personalComContactInfoGemContributor" class="xdi2.connector.personal.PersonalComContactInfoGemContributor" init-method="init">
-		<property name="personalComApi" ref="personalComApi" />
+	<bean name="personalContributor" class="xdi2.connector.personal.contributor.PersonalContributor">
+		<property name="graph" ref="graph1" />
+		<property name="personalApi" ref="personalApi" />
 	</bean>
 
 	<bean name="/personal" class="xdi2.messaging.target.impl.graph.GraphMessagingTarget">
@@ -52,18 +53,15 @@
 					<property name="bootstrapSharedSecret" value="s3cret" />
 					<property name="bootstrapLinkContract" value="true" />
 				</bean>
+				<bean class="xdi2.messaging.target.interceptor.impl.VariablesInterceptor" />
+				<bean class="xdi2.messaging.target.interceptor.impl.ExpandDollarIsInterceptor" />
 				<bean class="xdi2.messaging.target.interceptor.impl.CheckOwnerInterceptor" />
+				<ref bean="personalContributor" />
 			</util:list>
 		</property>
 		<property name="contributors">
 			<util:map>
-				<entry key="=!1111$!(+firstname)" value-ref="personalComNameGemContributor" />
-				<entry key="=!1111$!(+lastname)" value-ref="personalComNameGemContributor" />
-				<entry key="=!1111$!(+email)" value-ref="personalComContactInfoGemContributor" />
-				<entry key="=!1111$!(+phone)" value-ref="personalComContactInfoGemContributor" />
-				<entry key="=!1111$!(+website)" value-ref="personalComContactInfoGemContributor" />
-				<entry key="=!1111$!(+facebook)" value-ref="personalComContactInfoGemContributor" />
-				<entry key="=!1111$!(+twitter)" value-ref="personalComContactInfoGemContributor" />
+				<entry key="(https://personal.com)" value-ref="personalContributor" />
 			</util:map>
 		</property>
 	</bean>

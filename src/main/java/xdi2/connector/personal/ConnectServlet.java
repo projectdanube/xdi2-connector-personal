@@ -1,4 +1,4 @@
-package xdi2.connector.facebook;
+package xdi2.connector.personal;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -20,8 +20,8 @@ import org.springframework.web.HttpRequestHandler;
 import xdi2.client.XDIClient;
 import xdi2.client.exceptions.Xdi2ClientException;
 import xdi2.client.http.XDIHttpClient;
-import xdi2.connector.facebook.api.FacebookApi;
-import xdi2.connector.facebook.util.GraphUtil;
+import xdi2.connector.personal.api.PersonalApi;
+import xdi2.connector.personal.util.GraphUtil;
 import xdi2.core.Graph;
 import xdi2.core.impl.memory.MemoryGraphFactory;
 import xdi2.core.io.XDIReader;
@@ -42,7 +42,7 @@ public class ConnectServlet extends HttpServlet implements HttpRequestHandler {
 	static String sampleEndpoint;
 
 	private Graph graph;
-	private FacebookApi facebookApi;
+	private PersonalApi personalApi;
 
 	static {
 
@@ -70,13 +70,13 @@ public class ConnectServlet extends HttpServlet implements HttpRequestHandler {
 			}
 		}
 
-		sampleEndpoint = "/xdi/facebook"; 
+		sampleEndpoint = "/xdi/personal"; 
 	}
 
 	public ConnectServlet() {
 
 		this.graph = null;
-		this.facebookApi = null;
+		this.personalApi = null;
 	}
 
 	@Override
@@ -90,13 +90,13 @@ public class ConnectServlet extends HttpServlet implements HttpRequestHandler {
 
 		log.debug("Incoming GET request to " + request.getRequestURL() + ". Content-Type: " + request.getContentType() + ", Content-Length: " + request.getContentLength());
 
-		// redirect to Facebook?
+		// redirect to personal?
 
 		if (request.getParameter("startoauth") != null) {
 
 			try {
 
-				this.getFacebookApi().startOAuth(request, response);
+				this.getPersonalApi().startOAuth(request, response);
 				return;
 			} catch (Exception ex) {
 
@@ -104,7 +104,7 @@ public class ConnectServlet extends HttpServlet implements HttpRequestHandler {
 			}
 		}
 
-		// error from Facebook?
+		// error from personal?
 
 		if (request.getParameter("error") != null) {
 
@@ -112,16 +112,16 @@ public class ConnectServlet extends HttpServlet implements HttpRequestHandler {
 			if (errorDescription == null) errorDescription = request.getParameter("error_reason");
 			if (errorDescription == null) errorDescription = request.getParameter("error");
 
-			request.setAttribute("error", "Error from Facebook API: " + errorDescription);
+			request.setAttribute("error", "Error from personal API: " + errorDescription);
 		}
 
-		// callback from Facebook?
+		// callback from personal?
 
 		if (request.getParameter("code") != null) {
 
 			try {
 
-				String accessToken = this.getFacebookApi().exchangeCodeForAccessToken(request);
+				String accessToken = this.getPersonalApi().exchangeCodeForAccessToken(request);
 				if (accessToken == null) throw new Exception("No access token received.");
 
 				GraphUtil.storeAccessToken(this.getGraph(), accessToken);
@@ -141,7 +141,7 @@ public class ConnectServlet extends HttpServlet implements HttpRequestHandler {
 		request.setAttribute("input", sampleInput);
 		request.setAttribute("endpoint", request.getRequestURL().substring(0, request.getRequestURL().lastIndexOf("/")) + sampleEndpoint);
 
-		request.getRequestDispatcher("/FacebookConnector.jsp").forward(request, response);
+		request.getRequestDispatcher("/PersonalConnector.jsp").forward(request, response);
 	}
 
 	@Override
@@ -233,7 +233,7 @@ public class ConnectServlet extends HttpServlet implements HttpRequestHandler {
 		request.setAttribute("stats", stats);
 		request.setAttribute("error", error);
 
-		request.getRequestDispatcher("/FacebookConnector.jsp").forward(request, response);
+		request.getRequestDispatcher("/PersonalConnector.jsp").forward(request, response);
 	}
 
 	public Graph getGraph() {
@@ -246,13 +246,13 @@ public class ConnectServlet extends HttpServlet implements HttpRequestHandler {
 		this.graph = graph;
 	}
 
-	public FacebookApi getFacebookApi() {
+	public PersonalApi getPersonalApi() {
 
-		return this.facebookApi;
+		return this.personalApi;
 	}
 
-	public void setFacebookApi(FacebookApi facebookApi) {
+	public void setPersonalApi(PersonalApi personalApi) {
 
-		this.facebookApi = facebookApi;
+		this.personalApi = personalApi;
 	}
 }

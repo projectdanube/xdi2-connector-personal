@@ -6,6 +6,21 @@
 
 	<display-name>xdi2-connector-personal</display-name>
 
+	<!-- CONNECTOR WEB INTERFACE -->
+
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+
+	<servlet>
+		<servlet-name>ConnectServlet</servlet-name>
+		<servlet-class>org.springframework.web.context.support.HttpRequestHandlerServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ConnectServlet</servlet-name>
+		<url-pattern>/connect</url-pattern>
+	</servlet-mapping>
+
 	<!-- XDI FILTER -->
 
 	<filter>

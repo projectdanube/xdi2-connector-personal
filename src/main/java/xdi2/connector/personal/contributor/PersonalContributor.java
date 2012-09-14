@@ -1,12 +1,12 @@
-package xdi2.connector.facebook.contributor;
+package xdi2.connector.personal.contributor;
 
 import java.io.IOException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import xdi2.connector.facebook.api.FacebookApi;
-import xdi2.connector.facebook.util.GraphUtil;
+import xdi2.connector.personal.api.PersonalApi;
+import xdi2.connector.personal.util.GraphUtil;
 import xdi2.core.ContextNode;
 import xdi2.core.Graph;
 import xdi2.core.xri3.impl.XRI3Segment;
@@ -19,16 +19,16 @@ import xdi2.messaging.target.contributor.AbstractContributor;
 import xdi2.messaging.target.contributor.ContributorCall;
 import xdi2.messaging.target.interceptor.MessageEnvelopeInterceptor;
 
-public class FacebookContributor extends AbstractContributor implements MessageEnvelopeInterceptor {
+public class PersonalContributor extends AbstractContributor implements MessageEnvelopeInterceptor {
 
 	private Graph graph;
-	private FacebookApi facebookApi;
+	private PersonalApi personalApi;
 
-	public FacebookContributor() {
+	public PersonalContributor() {
 
 		super();
 
-		this.getContributors().addContributor(new FacebookUserContributor());
+		this.getContributors().addContributor(new PersonalUserContributor());
 	}
 
 	/*
@@ -38,7 +38,7 @@ public class FacebookContributor extends AbstractContributor implements MessageE
 	@Override
 	public boolean before(MessageEnvelope messageEnvelope, MessageResult messageResult, ExecutionContext executionContext) throws Xdi2MessagingException {
 
-		FacebookContributorExecutionContext.resetUsers(executionContext);
+		PersonalContributorExecutionContext.resetUsers(executionContext);
 
 		return false;
 	}
@@ -59,20 +59,20 @@ public class FacebookContributor extends AbstractContributor implements MessageE
 	 */
 
 	@ContributorCall(addresses={"($)"})
-	private class FacebookUserContributor extends AbstractContributor {
+	private class PersonalUserContributor extends AbstractContributor {
 
-		private FacebookUserContributor() {
+		private PersonalUserContributor() {
 
 			super();
 
-			this.getContributors().addContributor(new FacebookUserAttributeContributor());
+			this.getContributors().addContributor(new PersonalUserAttributeContributor());
 		}
 	}
 
 	@ContributorCall(addresses={"$!(preferred_last_name)","$!(preferred_first_name)"})
-	private class FacebookUserAttributeContributor extends AbstractContributor {
+	private class PersonalUserAttributeContributor extends AbstractContributor {
 
-		private FacebookUserAttributeContributor() {
+		private PersonalUserAttributeContributor() {
 
 			super();
 		}
@@ -85,14 +85,14 @@ public class FacebookContributor extends AbstractContributor implements MessageE
 
 			try {
 
-				String accessToken = GraphUtil.retrieveAccessToken(FacebookContributor.this.getGraph());
+				String accessToken = GraphUtil.retrieveAccessToken(PersonalContributor.this.getGraph());
 				if (accessToken == null) throw new Exception("No access token.");
 
-				JSONObject user = FacebookContributor.this.retrieveUser(executionContext, accessToken);
+				JSONObject user = PersonalContributor.this.retrieveUser(executionContext, accessToken);
 				if (user == null) throw new Exception("No user.");
 
-				if (contributorXriString.equals("$!(preferred_first_name)")) literalData = user.getString("first_name");
-				else if (contributorXriString.equals("$!(preferred_last_name)")) literalData = user.getString("last_name");
+				if (contributorXriString.equals("$!(preferred_first_name)")) literalData = user.getString("preferred_first_name");
+				else if (contributorXriString.equals("$!(preferred_last_name)")) literalData = user.getString("preferred_last_name");
 				else return false;
 			} catch (Exception ex) {
 
@@ -115,12 +115,12 @@ public class FacebookContributor extends AbstractContributor implements MessageE
 
 	private JSONObject retrieveUser(ExecutionContext executionContext, String accessToken) throws IOException, JSONException {
 
-		JSONObject user = FacebookContributorExecutionContext.getUser(executionContext, accessToken);
+		JSONObject user = PersonalContributorExecutionContext.getUser(executionContext, accessToken);
 
 		if (user == null) {
 
-			user = this.facebookApi.getUser(accessToken);
-			FacebookContributorExecutionContext.putUser(executionContext, accessToken, user);
+			user = this.personalApi.getUser(accessToken);
+			PersonalContributorExecutionContext.putUser(executionContext, accessToken, user);
 		}
 
 		return user;
@@ -140,13 +140,13 @@ public class FacebookContributor extends AbstractContributor implements MessageE
 		this.graph = graph;
 	}
 
-	public FacebookApi getFacebookApi() {
+	public PersonalApi getPersonalApi() {
 
-		return this.facebookApi;
+		return this.personalApi;
 	}
 
-	public void setFacebookApi(FacebookApi facebookApi) {
+	public void setPersonalApi(PersonalApi personalApi) {
 
-		this.facebookApi = facebookApi;
+		this.personalApi = personalApi;
 	}
 }

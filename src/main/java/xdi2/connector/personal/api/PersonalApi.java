@@ -1,7 +1,8 @@
-package xdi2.connector.facebook.api;
+package xdi2.connector.personal.api;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URI;
@@ -29,15 +30,15 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FacebookApi {
+public class PersonalApi {
 
-	private static final Logger log = LoggerFactory.getLogger(FacebookApi.class);
+	private static final Logger log = LoggerFactory.getLogger(PersonalApi.class);
 
 	private String appId;
 	private String appSecret;
 	private HttpClient httpClient;
 
-	public FacebookApi() {
+	public PersonalApi() {
 
 		this.appId = null;
 		this.appSecret = null;
@@ -115,6 +116,39 @@ public class FacebookApi {
 
 		log.debug("Access Token: " + accessToken);
 		return accessToken;
+	}
+	
+	public String getit(String url, String aToken, String secure_pass){
+		//String url = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey=xrb8fprukkstk5g94v26jhuz";
+		String charset = "UTF-8";
+		String result = null;
+		try 
+		{
+			URLConnection conn = new URL(url).openConnection();
+			
+			conn.setRequestProperty("Authorization", "Bearer " + aToken);
+			
+			System.out.println("get header fields"+conn.getHeaderFields().toString());
+			//System.out.println("get req prop"+conn.getRequestProperties().toString());
+			InputStream response = conn.getInputStream();
+			// GET request starts
+			BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			StringBuffer sb = new StringBuffer();
+			String line;
+			while ((line = rd.readLine()) != null)
+			{
+				sb.append(line);
+			}
+			rd.close();
+			result = sb.toString();
+		} 
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			System.out.println("Error: " + e.toString());
+		}
+		
+		return result;
 	}
 
 	public JSONObject getUser(String accessToken) throws IOException, JSONException {
