@@ -5,6 +5,6 @@
 (https://personal.com)+(+(preferred_last_name))/$is/+(+last)+(+name)
 (https://personal.com)+(+(personal_email))/$is/+(+email)
 (https://personal.com)+(+(home_mobile_phone))/$is/+(+mobile+)(+phone)
-(https://personal.com)+(+(home_phone))/$is/+(+home+(+phone)
+(https://personal.com)+(+(home_phone))/$is/+(+home)+(+phone)
 (https://personal.com)+(+(contact_info_fax))/$is/+(+fax)
 (https://personal.com)+(+(personal_website))/$is/+(+website)
