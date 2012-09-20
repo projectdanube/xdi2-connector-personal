@@ -69,7 +69,7 @@ public class PersonalContributor extends AbstractContributor implements MessageE
 		}
 	}
 
-	@ContributorCall(addresses={"$!(preferred_last_name)","$!(preferred_first_name)"})
+	@ContributorCall(addresses={"$!(preferred_last_name)","$!(preferred_first_name)","$!(home_mobile_phone)","$!(personal_email)"})
 	private class PersonalUserAttributeContributor extends AbstractContributor {
 
 		private PersonalUserAttributeContributor() {
@@ -91,8 +91,10 @@ public class PersonalContributor extends AbstractContributor implements MessageE
 				JSONObject user = PersonalContributor.this.retrieveUser(executionContext, accessToken);
 				if (user == null) throw new Exception("No user.");
 
-				if (contributorXriString.equals("$!(preferred_first_name)")) literalData = user.getString("preferred_first_name");
-				else if (contributorXriString.equals("$!(preferred_last_name)")) literalData = user.getString("preferred_last_name");
+				if (contributorXriString.equals("$!(preferred_first_name)")) literalData = user.getJSONArray("gem0").getJSONObject(0).getString("preferred_first_name");
+				else if (contributorXriString.equals("$!(preferred_last_name)")) literalData = user.getJSONArray("gem0").getJSONObject(0).getString("preferred_last_name");
+				else if (contributorXriString.equals("$!(home_mobile_phone)")) literalData = user.getJSONArray("gem0").getJSONObject(1).getString("home_mobile_phone");
+				else if (contributorXriString.equals("$!(personal_email)")) literalData = user.getJSONArray("gem0").getJSONObject(1).getString("personal_email");
 				else return false;
 			} catch (Exception ex) {
 

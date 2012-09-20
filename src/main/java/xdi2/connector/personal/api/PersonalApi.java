@@ -10,6 +10,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,6 +43,7 @@ public class PersonalApi {
 
 		this.appId = null;
 		this.appSecret = null;
+		
 		this.httpClient = new DefaultHttpClient();
 	}
 
@@ -56,14 +58,14 @@ public class PersonalApi {
 
 	public void startOAuth(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
-		String url = "https://api-sandbox.personal.com/oauth/authorize?client_id=2hmsfwb28jkmtuetxzk82x7r&response_type=code&redirect_uri="+req.getRequestURL().toString()+"&scope=read_0000&update=false";
+		String url = "https://api-sandbox.personal.com/oauth/authorize?client_id=2hmsfwb28jkmtuetxzk82x7r&response_type=code&redirect_uri="+req.getRequestURL().toString()+"&scope=read_0000,read_0001&update=true";
 
 		resp.setContentType("text/plain");
 		
 		resp.sendRedirect(url);
 	}
 	
-	public static StringBuffer postit(String code){
+	public static StringBuffer postit(String code,String reqURL){
 		BufferedReader rd = null;
 		StringBuffer sb = new StringBuffer();
     	try {
@@ -73,7 +75,7 @@ public class PersonalApi {
             data += "&" + URLEncoder.encode("code", "UTF-8") + "=" + URLEncoder.encode(code, "UTF-8");
             data += "&" + URLEncoder.encode("client_id", "UTF-8") + "=" + URLEncoder.encode("2hmsfwb28jkmtuetxzk82x7r", "UTF-8");
             data += "&" + URLEncoder.encode("client_secret", "UTF-8") + "=" + URLEncoder.encode("CyhuffsrBqdTfzTAsdMB9D6v", "UTF-8");
-            data += "&" + URLEncoder.encode("redirect_uri", "UTF-8") + "=" + URLEncoder.encode("http://localhost:8080", "UTF-8");
+            data += "&" + URLEncoder.encode("redirect_uri", "UTF-8") + "=" + URLEncoder.encode(reqURL, "UTF-8");
             // Send data
             URL url = new URL(postURL);
             URLConnection conn = url.openConnection();
@@ -101,7 +103,7 @@ public class PersonalApi {
 	public String exchangeCodeForAccessToken(HttpServletRequest req) throws IOException, HttpException {
 
 		String code = req.getParameter("code");
-		StringBuffer sb = postit(code);
+		StringBuffer sb = postit(code,req.getRequestURL().toString());
 		
 		JSONObject jObject;
 		String accessToken = null;
@@ -115,6 +117,7 @@ public class PersonalApi {
 		}
 
 		log.debug("Access Token: " + accessToken);
+		//log.debug("req url: "+req.getRequestURL().toString());
 		return accessToken;
 	}
 	
@@ -144,7 +147,6 @@ public class PersonalApi {
 		} 
 		catch (Exception e)
 		{
-			e.printStackTrace();
 			System.out.println("Error: " + e.toString());
 		}
 		
@@ -161,37 +163,46 @@ public class PersonalApi {
 		String res = getit(url,accessToken,null);
 		
 		String instanceID = null;
-		String encInstanceId = null;
+		
+		List<String> encInstanceId = new ArrayList<String>();
 		try {
 			JSONObject jj = new JSONObject(res);
 			org.json.JSONArray gemContents = jj.getJSONArray("gems");
 
 			instanceID = gemContents.getJSONObject(0).getString("gem_instance_id");
-
+			
 			//@SuppressWarnings("deprecation")
-			encInstanceId = URLEncoder.encode(instanceID);
+			//encInstanceId = URLEncoder.encode(gemContents.getJSONObject(0).getString("gem_instance_id"));
+			encInstanceId.add(URLEncoder.encode(gemContents.getJSONObject(0).getString("gem_instance_id")));
+			encInstanceId.add(URLEncoder.encode(gemContents.getJSONObject(1).getString("gem_instance_id")));
 			
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		url = "https://api-sandbox.personal.com/api/v1/gems/"+encInstanceId+"/?client_id=2hmsfwb28jkmtuetxzk82x7r";
-		String secure_pass = "CyhuffsrBqdTfzTAsdMB9D6v";
-		String gemData = getit(url,accessToken,secure_pass);
-		
-		JSONObject nameGemObject = new JSONObject();
-		try {
-			JSONObject tempObj = new JSONObject(gemData).getJSONObject("gem").getJSONObject("data");
-			nameGemObject = tempObj;
+		String gemData=null;
+		JSONObject gemObject = new JSONObject();
+		for (String i:encInstanceId)
+		{
+			int counter=0;
+			url = "https://api-sandbox.personal.com/api/v1/gems/"+i+"/?client_id=2hmsfwb28jkmtuetxzk82x7r";
+			String secure_pass = "CyhuffsrBqdTfzTAsdMB9D6v";
+			gemData = getit(url,accessToken,secure_pass);
 			
-		} catch (JSONException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			try {
+				JSONObject tempObj = new JSONObject(gemData).getJSONObject("gem").getJSONObject("data");
+				//nameGemObject = tempObj;
+				gemObject.append("gem"+counter++, tempObj);
+			} catch (JSONException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+			
 		}
 
-		log.debug("User: " + nameGemObject);
-		return nameGemObject;
+		log.debug("User: " + gemObject);
+		return gemObject;
 	}
 
 	private static String uriWithoutQuery(String url) {
