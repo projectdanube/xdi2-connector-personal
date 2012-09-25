@@ -27,8 +27,10 @@
 	</bean>
 
 	<bean name="personalApi" class="xdi2.connector.personal.api.PersonalApi" init-method="init" destroy-method="destroy">
-		<property name="appId" value="420250631345354" />
-		<property name="appSecret" value="c2feeda99926ab3c6096beaa8e6eca73" />
+		<property name="appId" value="2hmsfwb28jkmtuetxzk82x7r" />
+		<property name="appSecret" value="CyhuffsrBqdTfzTAsdMB9D6v" />
+		<property name="scope" value="read_0000,read_0001" />
+		<property name="update" value="true" />
 	</bean>
 
 	<!-- MESSAGING TARGET at /personal -->

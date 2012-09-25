@@ -37,6 +37,8 @@ public class PersonalApi {
 
 	private String appId;
 	private String appSecret;
+	private String scope;
+	private String update;
 	private HttpClient httpClient;
 
 	public PersonalApi() {
@@ -58,23 +60,25 @@ public class PersonalApi {
 
 	public void startOAuth(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
-		String url = "https://api-sandbox.personal.com/oauth/authorize?client_id=2hmsfwb28jkmtuetxzk82x7r&response_type=code&redirect_uri="+req.getRequestURL().toString()+"&scope=read_0000,read_0001&update=true";
+		String client_id = this.appId;
+		String url = "https://api-sandbox.personal.com/oauth/authorize?client_id="+client_id+"&response_type=code&redirect_uri="+req.getRequestURL().toString()+"&scope="+this.scope+"&update="+this.update;
 
 		resp.setContentType("text/plain");
 		
 		resp.sendRedirect(url);
 	}
 	
-	public static StringBuffer postit(String code,String reqURL){
+	public StringBuffer postit(String code,String reqURL){
 		BufferedReader rd = null;
 		StringBuffer sb = new StringBuffer();
+
     	try {
             String postURL = "https://api-sandbox.personal.com/oauth/access_token";
             // Construct data
             String data = URLEncoder.encode("grant_type", "UTF-8") + "=" + URLEncoder.encode("authorization_code", "UTF-8");
             data += "&" + URLEncoder.encode("code", "UTF-8") + "=" + URLEncoder.encode(code, "UTF-8");
-            data += "&" + URLEncoder.encode("client_id", "UTF-8") + "=" + URLEncoder.encode("2hmsfwb28jkmtuetxzk82x7r", "UTF-8");
-            data += "&" + URLEncoder.encode("client_secret", "UTF-8") + "=" + URLEncoder.encode("CyhuffsrBqdTfzTAsdMB9D6v", "UTF-8");
+            data += "&" + URLEncoder.encode("client_id", "UTF-8") + "=" + URLEncoder.encode(this.appId, "UTF-8");
+            data += "&" + URLEncoder.encode("client_secret", "UTF-8") + "=" + URLEncoder.encode(this.appSecret, "UTF-8");
             data += "&" + URLEncoder.encode("redirect_uri", "UTF-8") + "=" + URLEncoder.encode(reqURL, "UTF-8");
             // Send data
             URL url = new URL(postURL);
@@ -159,7 +163,7 @@ public class PersonalApi {
 		
 		log.debug("Retrieving User for Access Token '" + accessToken + "'");
 
-		String url = "https://api-sandbox.personal.com/api/v1/gems/?client_id=2hmsfwb28jkmtuetxzk82x7r";
+		String url = "https://api-sandbox.personal.com/api/v1/gems/?client_id="+this.appId;
 		String res = getit(url,accessToken,null);
 		
 		String instanceID = null;
@@ -185,8 +189,8 @@ public class PersonalApi {
 		for (String i:encInstanceId)
 		{
 			int counter=0;
-			url = "https://api-sandbox.personal.com/api/v1/gems/"+i+"/?client_id=2hmsfwb28jkmtuetxzk82x7r";
-			String secure_pass = "CyhuffsrBqdTfzTAsdMB9D6v";
+			url = "https://api-sandbox.personal.com/api/v1/gems/"+i+"/?client_id="+this.appId;
+			String secure_pass = this.appSecret;
 			gemData = getit(url,accessToken,secure_pass);
 			
 			try {
@@ -228,5 +232,25 @@ public class PersonalApi {
 	public void setAppSecret(String appSecret) {
 
 		this.appSecret = appSecret;
+	}
+	
+	public String getScope() {
+
+		return this.scope;
+	}
+
+	public void setScope(String appSecret) {
+
+		this.scope = appSecret;
+	}
+	
+	public String getUpdate() {
+
+		return this.update;
+	}
+
+	public void setUpdate(String appSecret) {
+
+		this.update = appSecret;
 	}
 }
