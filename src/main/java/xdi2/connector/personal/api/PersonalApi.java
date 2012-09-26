@@ -134,7 +134,6 @@ public class PersonalApi {
 		conn.setRequestProperty("Authorization", "Bearer " + aToken);
 		log.debug("Headers: " + conn.getHeaderFields().toString());
 
-		//System.out.println("get req prop"+conn.getRequestProperties().toString());
 		InputStream response = conn.getInputStream();
 		// GET request starts
 		BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
