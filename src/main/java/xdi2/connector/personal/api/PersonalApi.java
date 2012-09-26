@@ -63,7 +63,8 @@ public class PersonalApi {
 	public void startOAuth(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
 		String client_id = this.appId;
-		String url = "https://api-sandbox.personal.com/oauth/authorize?client_id="+client_id+"&response_type=code&redirect_uri="+req.getRequestURL().toString()+"&scope="+this.scope+"&update="+this.update;
+		String redirectUri = uriWithoutQuery(req.getRequestURL().toString());
+		String url = "https://api-sandbox.personal.com/oauth/authorize?client_id="+URLEncoder.encode(client_id, "UTF-8")+"&response_type=code&redirect_uri="+URLEncoder.encode(redirectUri, "UTF-8")+"&scope="+URLEncoder.encode(this.scope, "UTF-8")+"&update="+this.update;
 
 		resp.setContentType("text/plain");
 
@@ -106,7 +107,7 @@ public class PersonalApi {
 	public String exchangeCodeForAccessToken(HttpServletRequest req) throws IOException, HttpException {
 
 		String code = req.getParameter("code");
-		StringBuffer sb = postit(code,req.getRequestURL().toString());
+		StringBuffer sb = postit(code,uriWithoutQuery(req.getRequestURL().toString()));
 
 		JSONObject jObject;
 		String accessToken = null;
