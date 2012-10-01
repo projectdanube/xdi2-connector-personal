@@ -28,6 +28,7 @@ import xdi2.core.io.XDIReader;
 import xdi2.core.io.XDIReaderRegistry;
 import xdi2.core.io.XDIWriter;
 import xdi2.core.io.XDIWriterRegistry;
+import xdi2.core.xri3.impl.XRI3Segment;
 import xdi2.messaging.MessageEnvelope;
 import xdi2.messaging.MessageResult;
 
@@ -90,13 +91,16 @@ public class ConnectServlet extends HttpServlet implements HttpRequestHandler {
 
 		log.debug("Incoming GET request to " + request.getRequestURL() + ". Content-Type: " + request.getContentType() + ", Content-Length: " + request.getContentLength());
 
-		// redirect to personal?
+		// start OAuth?
 
-		if (request.getParameter("startoauth") != null) {
+		if ("Request Access Token!".equals(request.getParameter("submit"))) {
+
+			XRI3Segment userXri = new XRI3Segment(request.getParameter("userXri"));
+			request.getSession().setAttribute("userXri", userXri);
 
 			try {
 
-				this.getPersonalApi().startOAuth(request, response);
+				this.getPersonalApi().startOAuth(request, response, userXri);
 				return;
 			} catch (Exception ex) {
 
@@ -104,7 +108,30 @@ public class ConnectServlet extends HttpServlet implements HttpRequestHandler {
 			}
 		}
 
-		// error from personal?
+		// revoke OAuth?
+
+		if ("Revoke Access Token!".equals(request.getParameter("submit"))) {
+
+			XRI3Segment userXri = new XRI3Segment(request.getParameter("userXri"));
+			request.getSession().setAttribute("userXri", userXri);
+
+			try {
+
+				String accessToken = GraphUtil.retrieveAccessToken(this.getGraph(), userXri);
+				if (accessToken == null) throw new Exception("No access token in graph.");
+
+				this.getPersonalApi().revokeAccessToken(accessToken);
+
+				GraphUtil.removeAccessToken(this.getGraph(), userXri);
+
+				request.setAttribute("feedback", "Access token successfully revoked and removed from graph.");
+			} catch (Exception ex) {
+
+				request.setAttribute("error", ex.getMessage());
+			}
+		}
+
+		// error from OAuth?
 
 		if (request.getParameter("error") != null) {
 
@@ -112,19 +139,23 @@ public class ConnectServlet extends HttpServlet implements HttpRequestHandler {
 			if (errorDescription == null) errorDescription = request.getParameter("error_reason");
 			if (errorDescription == null) errorDescription = request.getParameter("error");
 
-			request.setAttribute("error", "Error from personal API: " + errorDescription);
+			request.setAttribute("error", "OAuth error: " + errorDescription);
 		}
 
-		// callback from personal?
+		// callback from OAuth?
 
 		if (request.getParameter("code") != null) {
 
+			XRI3Segment userXri = (XRI3Segment) request.getSession().getAttribute("userXri");
+
 			try {
+
+				this.getPersonalApi().checkState(request, userXri);
 
 				String accessToken = this.getPersonalApi().exchangeCodeForAccessToken(request);
 				if (accessToken == null) throw new Exception("No access token received.");
 
-				GraphUtil.storeAccessToken(this.getGraph(), accessToken);
+				GraphUtil.storeAccessToken(this.getGraph(), userXri, accessToken);
 
 				request.setAttribute("feedback", "Access token successfully received and stored in graph.");
 			} catch (Exception ex) {

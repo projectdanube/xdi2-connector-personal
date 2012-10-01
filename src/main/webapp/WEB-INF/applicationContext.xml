@@ -26,13 +26,6 @@
 		<property name="personalApi" ref="personalApi" />
 	</bean>
 
-	<bean name="personalApi" class="xdi2.connector.personal.api.PersonalApi" init-method="init" destroy-method="destroy">
-		<property name="appId" value="2hmsfwb28jkmtuetxzk82x7r" />
-		<property name="appSecret" value="CyhuffsrBqdTfzTAsdMB9D6v" />
-		<property name="scope" value="read_0000,read_0001" />
-		<property name="update" value="true" />
-	</bean>
-
 	<!-- MESSAGING TARGET at /personal -->
 	<!-- MessagingTarget: GraphMessagingTarget backed by a MemoryGraph -->
 
@@ -41,9 +34,25 @@
 
 	<bean id="graph1" factory-bean="graphfactory1" factory-method="openGraph" />
 
-	<bean name="personalContributor" class="xdi2.connector.personal.contributor.PersonalContributor">
+	<bean id="personalContributor" class="xdi2.connector.personal.contributor.PersonalContributor">
 		<property name="graph" ref="graph1" />
 		<property name="personalApi" ref="personalApi" />
+		<property name="personalMapping" ref="personalMapping" />
+	</bean>
+
+	<bean id="personalApi" class="xdi2.connector.personal.api.PersonalApi" init-method="init" destroy-method="destroy">
+		<property name="appId" value="2hmsfwb28jkmtuetxzk82x7r" />
+		<property name="appSecret" value="CyhuffsrBqdTfzTAsdMB9D6v" />
+		<property name="scope" value="read_0000,read_0001" />
+		<property name="update" value="true" />
+	</bean>
+
+	<bean id="personalMapping" class="xdi2.connector.personal.mapping.PersonalMapping">
+		<property name="mappingGraph" ref="personalMappingGraph" />
+	</bean>
+
+	<bean id="personalMappingGraph" factory-bean="graphfactory1" factory-method="loadGraph">
+		<constructor-arg><value>classpath&#58;/xdi2/connector/personal/mapping/mapping.xdi</value></constructor-arg>
 	</bean>
 
 	<bean name="/personal" class="xdi2.messaging.target.impl.graph.GraphMessagingTarget">

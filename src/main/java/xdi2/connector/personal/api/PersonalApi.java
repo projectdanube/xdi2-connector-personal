@@ -5,33 +5,24 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpException;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import xdi2.core.xri3.impl.XRI3Segment;
 
 public class PersonalApi {
 
@@ -60,11 +51,12 @@ public class PersonalApi {
 		this.httpClient.getConnectionManager().shutdown();
 	}
 
-	public void startOAuth(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+	public void startOAuth(HttpServletRequest req, HttpServletResponse resp, XRI3Segment userXri) throws IOException {
 
 		String client_id = this.appId;
 		String redirectUri = uriWithoutQuery(req.getRequestURL().toString());
-		String url = "https://api-sandbox.personal.com/oauth/authorize?client_id="+URLEncoder.encode(client_id, "UTF-8")+"&response_type=code&redirect_uri="+URLEncoder.encode(redirectUri, "UTF-8")+"&scope="+URLEncoder.encode(this.scope, "UTF-8")+"&update="+this.update;
+		String state = userXri.toString();
+		String url = "https://api-sandbox.personal.com/oauth/authorize?client_id="+URLEncoder.encode(client_id, "UTF-8")+"&response_type=code&redirect_uri="+URLEncoder.encode(redirectUri, "UTF-8")+"&scope="+URLEncoder.encode(this.scope, "UTF-8")+"&update="+this.update+"&state="+URLEncoder.encode(state, "UTF-8");
 
 		resp.setContentType("text/plain");
 
@@ -104,6 +96,19 @@ public class PersonalApi {
 		return sb;
 	}
 
+	public void checkState(HttpServletRequest request, XRI3Segment userXri) throws IOException {
+
+		String state = request.getParameter("state");
+
+		if (state == null) {
+
+			log.warn("No OAuth state received.");
+			return;
+		}
+
+		if (! userXri.toString().equals(state)) throw new IOException("Invalid state: " + state);
+	}
+
 	public String exchangeCodeForAccessToken(HttpServletRequest req) throws IOException, HttpException {
 
 		String code = req.getParameter("code");
@@ -125,6 +130,13 @@ public class PersonalApi {
 		return accessToken;
 	}
 
+	public void revokeAccessToken(String accessToken) throws IOException, JSONException {
+
+		if (accessToken == null) throw new NullPointerException();
+
+		throw new UnsupportedOperationException("Not implemented.");
+	}
+
 	public String getit(String url, String aToken, String secure_pass) throws IOException {
 		//String url = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey=xrb8fprukkstk5g94v26jhuz";
 		String charset = "UTF-8";
@@ -133,7 +145,6 @@ public class PersonalApi {
 		URLConnection conn = new URL(url).openConnection();
 
 		conn.setRequestProperty("Authorization", "Bearer " + aToken);
-		log.debug("Headers: " + conn.getHeaderFields().toString());
 
 		InputStream response = conn.getInputStream();
 		// GET request starts
@@ -147,6 +158,9 @@ public class PersonalApi {
 		rd.close();
 		result = sb.toString();
 
+		log.debug("Headers: " + conn.getHeaderFields().toString());
+		log.debug("Body: " + result);
+
 		return result;
 	}
 
@@ -159,20 +173,13 @@ public class PersonalApi {
 		String url = "https://api-sandbox.personal.com/api/v1/gems/?client_id="+this.appId;
 		String res = getit(url,accessToken,null);
 
-		String instanceID = null;
-
 		List<String> encInstanceId = new ArrayList<String>();
 		try {
 			JSONObject jj = new JSONObject(res);
 			org.json.JSONArray gemContents = jj.getJSONArray("gems");
 
-			instanceID = gemContents.getJSONObject(0).getString("gem_instance_id");
-
-			//@SuppressWarnings("deprecation")
-			//encInstanceId = URLEncoder.encode(gemContents.getJSONObject(0).getString("gem_instance_id"));
-			encInstanceId.add(URLEncoder.encode(gemContents.getJSONObject(0).getString("gem_instance_id"), "UTF-8"));
-			encInstanceId.add(URLEncoder.encode(gemContents.getJSONObject(1).getString("gem_instance_id"), "UTF-8"));
-
+			for (int i=0; i<gemContents.length(); i++)
+				encInstanceId.add(URLEncoder.encode(gemContents.getJSONObject(i).getString("gem_instance_id"), "UTF-8"));
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -181,15 +188,13 @@ public class PersonalApi {
 		JSONObject gemObject = new JSONObject();
 		for (String i:encInstanceId)
 		{
-			int counter=0;
 			url = "https://api-sandbox.personal.com/api/v1/gems/"+i+"/?client_id="+this.appId;
 			String secure_pass = this.appSecret;
 			gemData = getit(url,accessToken,secure_pass);
-			log.info(gemData);
 			try {
-				JSONObject tempObj = new JSONObject(gemData).getJSONObject("gem").getJSONObject("data");
+				JSONObject tempObj = new JSONObject(gemData).getJSONObject("gem");
 				//nameGemObject = tempObj;
-				gemObject.append("gem"+counter++, tempObj);
+				gemObject.put(tempObj.getJSONObject("info").getString("gem_template_id"), tempObj.getJSONObject("data"));
 			} catch (JSONException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
