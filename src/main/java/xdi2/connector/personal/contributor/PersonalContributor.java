@@ -58,6 +58,11 @@ public class PersonalContributor extends AbstractContributor implements MessageE
 			contributor.setTokenGraph(((GraphMessagingTarget) prototypingContext.getMessagingTarget()).getGraph());
 		}
 
+		// set api and mapping
+
+		contributor.setPersonalApi(this.getPersonalApi());
+		contributor.setPersonalMapping(this.getPersonalMapping());
+
 		// done
 
 		return contributor;
