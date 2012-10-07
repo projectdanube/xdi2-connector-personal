@@ -38,7 +38,13 @@ public class PersonalApi {
 
 		this.appId = null;
 		this.appSecret = null;
+		this.httpClient = new DefaultHttpClient();
+	}
 
+	public PersonalApi(String appId, String appSecret) {
+
+		this.appId = appId;
+		this.appSecret = appSecret;
 		this.httpClient = new DefaultHttpClient();
 	}
 
@@ -51,16 +57,16 @@ public class PersonalApi {
 		this.httpClient.getConnectionManager().shutdown();
 	}
 
-	public void startOAuth(HttpServletRequest req, HttpServletResponse resp, XRI3Segment userXri) throws IOException {
+	public void startOAuth(HttpServletRequest request, HttpServletResponse response, String redirectPath, XRI3Segment userXri) throws IOException {
 
 		String client_id = this.appId;
-		String redirectUri = uriWithoutQuery(req.getRequestURL().toString());
+		String redirectUri = uriWithoutQuery(request.getRequestURL().toString()) + (redirectPath == null ? "" : redirectPath);
 		String state = userXri.toString();
 		String url = "https://api-sandbox.personal.com/oauth/authorize?client_id="+URLEncoder.encode(client_id, "UTF-8")+"&response_type=code&redirect_uri="+URLEncoder.encode(redirectUri, "UTF-8")+"&scope="+URLEncoder.encode(this.scope, "UTF-8")+"&update="+this.update+"&state="+URLEncoder.encode(state, "UTF-8");
 
-		resp.setContentType("text/plain");
+		response.setContentType("text/plain");
 
-		resp.sendRedirect(url);
+		response.sendRedirect(url);
 	}
 
 	public StringBuffer postit(String code,String reqURL) throws IOException{

@@ -5,8 +5,11 @@ import org.slf4j.LoggerFactory;
 
 import xdi2.core.ContextNode;
 import xdi2.core.Graph;
+import xdi2.core.exceptions.Xdi2RuntimeException;
 import xdi2.core.features.dictionary.Dictionary;
 import xdi2.core.features.multiplicity.Multiplicity;
+import xdi2.core.impl.memory.MemoryGraphFactory;
+import xdi2.core.io.XDIReaderRegistry;
 import xdi2.core.xri3.impl.XRI3Segment;
 import xdi2.core.xri3.impl.XRI3SubSegment;
 
@@ -16,7 +19,29 @@ public class PersonalMapping {
 
 	private static final Logger log = LoggerFactory.getLogger(PersonalMapping.class);
 
+	private static PersonalMapping instance;
+
 	private Graph mappingGraph;
+
+	public PersonalMapping() {
+
+		this.mappingGraph = MemoryGraphFactory.getInstance().openGraph();
+
+		try {
+
+			XDIReaderRegistry.getAuto().read(this.mappingGraph, PersonalMapping.class.getResourceAsStream("mapping.xdi"));
+		} catch (Exception ex) {
+
+			throw new Xdi2RuntimeException(ex.getMessage(), ex);
+		}
+	}
+
+	public static PersonalMapping getInstance() {
+
+		if (instance == null) instance = new PersonalMapping();
+
+		return instance;
+	}
 
 	/**
 	 * Converts a Personal data XRI to a native Personal gem identifier.
@@ -44,7 +69,7 @@ public class PersonalMapping {
 	public String personalDataXriToPersonalFieldIdentifier(XRI3Segment personalDataXri) {
 
 		if (personalDataXri == null) throw new NullPointerException();
-		
+
 		// convert
 
 		String personalFieldIdentifier = Dictionary.instanceXriToNativeIdentifier(Multiplicity.baseArcXri((XRI3SubSegment) personalDataXri.getSubSegment(1)));
@@ -75,7 +100,7 @@ public class PersonalMapping {
 
 		ContextNode xdiDataDictionaryContextNode = Dictionary.getCanonicalContextNode(personalDataDictionaryContextNode);
 		XRI3Segment xdiDataDictionaryXri = xdiDataDictionaryContextNode.getXri();
-		
+
 		// convert
 
 		StringBuilder buffer = new StringBuilder();

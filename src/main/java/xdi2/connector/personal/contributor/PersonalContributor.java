@@ -18,15 +18,18 @@ import xdi2.messaging.MessageEnvelope;
 import xdi2.messaging.MessageResult;
 import xdi2.messaging.exceptions.Xdi2MessagingException;
 import xdi2.messaging.target.ExecutionContext;
+import xdi2.messaging.target.MessagingTarget;
+import xdi2.messaging.target.Prototype;
 import xdi2.messaging.target.contributor.AbstractContributor;
 import xdi2.messaging.target.contributor.ContributorCall;
+import xdi2.messaging.target.impl.graph.GraphMessagingTarget;
 import xdi2.messaging.target.interceptor.MessageEnvelopeInterceptor;
 
-public class PersonalContributor extends AbstractContributor implements MessageEnvelopeInterceptor {
+public class PersonalContributor extends AbstractContributor implements MessageEnvelopeInterceptor, Prototype<PersonalContributor> {
 
 	private static final Logger log = LoggerFactory.getLogger(PersonalContributor.class);
 
-	private Graph graph;
+	private Graph tokenGraph;
 	private PersonalApi personalApi;
 	private PersonalMapping personalMapping;
 
@@ -35,6 +38,33 @@ public class PersonalContributor extends AbstractContributor implements MessageE
 		super();
 
 		this.getContributors().addContributor(new PersonalUserContributor());
+	}
+
+	/*
+	 * Prototype
+	 */
+
+	@Override
+	public PersonalContributor instanceFor(MessagingTarget messagingTarget, XRI3Segment owner, ContextNode ownerRemoteRootContextNode, ContextNode ownerContextNode) throws Xdi2MessagingException {
+
+		// create new contributor
+
+		PersonalContributor contributor = new PersonalContributor();
+
+		// set the contributor map
+
+		contributor.setContributors(this.getContributors().instanceFor(messagingTarget, owner, ownerRemoteRootContextNode, ownerContextNode));
+
+		// set the token graph
+
+		if (this.tokenGraph == null && messagingTarget instanceof GraphMessagingTarget) {
+
+			contributor.setTokenGraph(((GraphMessagingTarget) messagingTarget).getGraph());
+		}
+
+		// done
+
+		return contributor;
 	}
 
 	/*
@@ -103,7 +133,7 @@ public class PersonalContributor extends AbstractContributor implements MessageE
 				if (personalGemIdentifier == null) return false;
 				if (personalFieldIdentifier == null) return false;
 
-				String accessToken = GraphUtil.retrieveAccessToken(PersonalContributor.this.getGraph(), userXri);
+				String accessToken = GraphUtil.retrieveAccessToken(PersonalContributor.this.getTokenGraph(), userXri);
 				if (accessToken == null) throw new Exception("No access token.");
 
 				JSONObject user = PersonalContributor.this.retrieveUser(executionContext, accessToken);
@@ -154,14 +184,14 @@ public class PersonalContributor extends AbstractContributor implements MessageE
 	 * Getters and setters
 	 */
 
-	public Graph getGraph() {
+	public Graph getTokenGraph() {
 
-		return this.graph;
+		return this.tokenGraph;
 	}
 
-	public void setGraph(Graph graph) {
+	public void setTokenGraph(Graph tokenGraph) {
 
-		this.graph = graph;
+		this.tokenGraph = tokenGraph;
 	}
 
 	public PersonalApi getPersonalApi() {
