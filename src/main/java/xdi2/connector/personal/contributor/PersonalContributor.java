@@ -18,13 +18,13 @@ import xdi2.messaging.MessageEnvelope;
 import xdi2.messaging.MessageResult;
 import xdi2.messaging.exceptions.Xdi2MessagingException;
 import xdi2.messaging.target.ExecutionContext;
-import xdi2.messaging.target.MessagingTarget;
 import xdi2.messaging.target.Prototype;
 import xdi2.messaging.target.contributor.AbstractContributor;
-import xdi2.messaging.target.contributor.ContributorCall;
+import xdi2.messaging.target.contributor.ContributorXri;
 import xdi2.messaging.target.impl.graph.GraphMessagingTarget;
 import xdi2.messaging.target.interceptor.MessageEnvelopeInterceptor;
 
+@ContributorXri(addresses={"(https://personal.com)"})
 public class PersonalContributor extends AbstractContributor implements MessageEnvelopeInterceptor, Prototype<PersonalContributor> {
 
 	private static final Logger log = LoggerFactory.getLogger(PersonalContributor.class);
@@ -45,21 +45,17 @@ public class PersonalContributor extends AbstractContributor implements MessageE
 	 */
 
 	@Override
-	public PersonalContributor instanceFor(MessagingTarget messagingTarget, XRI3Segment owner, ContextNode ownerRemoteRootContextNode, ContextNode ownerContextNode) throws Xdi2MessagingException {
+	public PersonalContributor instanceFor(PrototypingContext prototypingContext) throws Xdi2MessagingException {
 
 		// create new contributor
 
 		PersonalContributor contributor = new PersonalContributor();
 
-		// set the contributor map
-
-		contributor.setContributors(this.getContributors().instanceFor(messagingTarget, owner, ownerRemoteRootContextNode, ownerContextNode));
-
 		// set the token graph
 
-		if (this.tokenGraph == null && messagingTarget instanceof GraphMessagingTarget) {
+		if (this.tokenGraph == null && prototypingContext.getMessagingTarget() instanceof GraphMessagingTarget) {
 
-			contributor.setTokenGraph(((GraphMessagingTarget) messagingTarget).getGraph());
+			contributor.setTokenGraph(((GraphMessagingTarget) prototypingContext.getMessagingTarget()).getGraph());
 		}
 
 		// done
@@ -94,7 +90,7 @@ public class PersonalContributor extends AbstractContributor implements MessageE
 	 * Sub-Contributors
 	 */
 
-	@ContributorCall(addresses={"($)"})
+	@ContributorXri(addresses={"($)"})
 	private class PersonalUserContributor extends AbstractContributor {
 
 		private PersonalUserContributor() {
@@ -105,7 +101,7 @@ public class PersonalContributor extends AbstractContributor implements MessageE
 		}
 	}
 
-	@ContributorCall(addresses={"($)($)"})
+	@ContributorXri(addresses={"($)($)"})
 	private class PersonalGemFieldContributor extends AbstractContributor {
 
 		private PersonalGemFieldContributor() {

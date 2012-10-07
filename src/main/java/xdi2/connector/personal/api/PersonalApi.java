@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.http.HttpException;
 import org.apache.http.client.HttpClient;
@@ -57,16 +56,17 @@ public class PersonalApi {
 		this.httpClient.getConnectionManager().shutdown();
 	}
 
-	public void startOAuth(HttpServletRequest request, HttpServletResponse response, String redirectPath, XRI3Segment userXri) throws IOException {
+	public String startOAuth(HttpServletRequest request, String redirectUri, XRI3Segment userXri) throws IOException {
 
 		String client_id = this.appId;
-		String redirectUri = uriWithoutQuery(request.getRequestURL().toString()) + (redirectPath == null ? "" : redirectPath);
+		if (redirectUri == null) redirectUri = uriWithoutQuery(request.getRequestURL().toString());
 		String state = userXri.toString();
 		String url = "https://api-sandbox.personal.com/oauth/authorize?client_id="+URLEncoder.encode(client_id, "UTF-8")+"&response_type=code&redirect_uri="+URLEncoder.encode(redirectUri, "UTF-8")+"&scope="+URLEncoder.encode(this.scope, "UTF-8")+"&update="+this.update+"&state="+URLEncoder.encode(state, "UTF-8");
 
-		response.setContentType("text/plain");
+		// done
 
-		response.sendRedirect(url);
+		log.debug("OAuth URI: " + url);
+		return url;
 	}
 
 	public StringBuffer postit(String code,String reqURL) throws IOException{
@@ -113,6 +113,8 @@ public class PersonalApi {
 		}
 
 		if (! userXri.toString().equals(state)) throw new IOException("Invalid state: " + state);
+
+		log.debug("State OK");
 	}
 
 	public String exchangeCodeForAccessToken(HttpServletRequest req) throws IOException, HttpException {
