@@ -245,9 +245,9 @@ public class PersonalApi {
 		return this.scope;
 	}
 
-	public void setScope(String appSecret) {
+	public void setScope(String scope) {
 
-		this.scope = appSecret;
+		this.scope = scope;
 	}
 
 	public String getUpdate() {
@@ -255,8 +255,8 @@ public class PersonalApi {
 		return this.update;
 	}
 
-	public void setUpdate(String appSecret) {
+	public void setUpdate(String update) {
 
-		this.update = appSecret;
+		this.update = update;
 	}
 }
