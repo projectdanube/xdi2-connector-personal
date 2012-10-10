@@ -15,7 +15,7 @@ import xdi2.core.xri3.impl.XRI3SubSegment;
 
 public class PersonalMapping {
 
-	public static final XRI3SubSegment XRI_S_PERSONAL_CONTEXT = new XRI3SubSegment("(https://personal.com)");
+	public static final XRI3SubSegment XRI_S_PERSONAL_CONTEXT = new XRI3SubSegment("+(https://personal.com/)");
 
 	private static final Logger log = LoggerFactory.getLogger(PersonalMapping.class);
 
