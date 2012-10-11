@@ -154,6 +154,8 @@ public class PersonalApi {
 
 		conn.setRequestProperty("Authorization", "Bearer " + aToken);
 
+		log.debug("Headers: " + conn.getHeaderFields().toString());
+
 		InputStream response = conn.getInputStream();
 		// GET request starts
 		BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -165,8 +167,6 @@ public class PersonalApi {
 		}
 		rd.close();
 		result = sb.toString();
-
-		log.debug("Headers: " + conn.getHeaderFields().toString());
 		log.debug("Body: " + result);
 
 		return result;
