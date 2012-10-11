@@ -149,6 +149,8 @@ public class PersonalContributor extends AbstractContributor implements Messagin
 				if (personalGemIdentifier == null) return false;
 				if (personalFieldIdentifier == null) return false;
 
+				log.debug("personalGemIdentifier: " + personalGemIdentifier + ", personalFieldIdentifier: " + personalFieldIdentifier);
+
 				String accessToken = GraphUtil.retrieveAccessToken(PersonalContributor.this.getTokenGraph(), userXri);
 				if (accessToken == null) throw new Exception("No access token.");
 
