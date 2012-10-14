@@ -28,9 +28,12 @@ public class PersonalMappingTest extends TestCase {
 	public void testMapping() throws Exception {
 
 		XRI3Segment personalDataXri = new XRI3Segment("+(0000)$!(+(preferred_first_name))");
+		XRI3Segment xdiDataXri = new XRI3Segment("+first$!(+name)");
 
 		assertEquals("0000", this.personalMapping.personalDataXriToPersonalGemIdentifier(personalDataXri));
 		assertEquals("preferred_first_name", this.personalMapping.personalDataXriToPersonalFieldIdentifier(personalDataXri));
-		assertEquals(new XRI3Segment("+first$!(+name)"), this.personalMapping.personalDataXriToXdiDataXri(personalDataXri));
+
+		assertEquals(xdiDataXri, this.personalMapping.personalDataXriToXdiDataXri(personalDataXri));
+		assertEquals(personalDataXri, this.personalMapping.xdiDataXriToPersonalDataXri(xdiDataXri));
 	}
 }

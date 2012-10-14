@@ -89,12 +89,18 @@ public class PersonalMapping {
 
 		if (personalDataXri == null) throw new NullPointerException();
 
+		// convert
+		
+		StringBuffer buffer1 = new StringBuffer();
+
+		for (int i=0; i<personalDataXri.getNumSubSegments(); i++) {
+			
+			buffer1.append(Dictionary.instanceXriToDictionaryXri(Multiplicity.baseArcXri((XRI3SubSegment) personalDataXri.getSubSegment(i))));
+		}
+
 		// map
 
-		XRI3SubSegment personalGemXri = Dictionary.nativeIdentifierToInstanceXri(this.personalDataXriToPersonalGemIdentifier(personalDataXri));
-		XRI3SubSegment personalFieldXri = Dictionary.nativeIdentifierToInstanceXri(this.personalDataXriToPersonalFieldIdentifier(personalDataXri));
-
-		XRI3Segment personalDataDictionaryXri = new XRI3Segment("" + XRI_S_PERSONAL_CONTEXT + Dictionary.instanceXriToDictionaryXri(personalGemXri) + Dictionary.instanceXriToDictionaryXri(personalFieldXri));
+		XRI3Segment personalDataDictionaryXri = new XRI3Segment("" + XRI_S_PERSONAL_CONTEXT + buffer1.toString());
 		ContextNode personalDataDictionaryContextNode = this.mappingGraph.findContextNode(personalDataDictionaryXri, false);
 		if (personalDataDictionaryContextNode == null) return null;
 
@@ -103,26 +109,76 @@ public class PersonalMapping {
 
 		// convert
 
-		StringBuilder buffer = new StringBuilder();
+		StringBuilder buffer2 = new StringBuilder();
 
 		for (int i=0; i<xdiDataDictionaryXri.getNumSubSegments(); i++) {
 
 			if (i + 1 < xdiDataDictionaryXri.getNumSubSegments()) {
 
-				buffer.append(Multiplicity.entitySingletonArcXri(Dictionary.dictionaryXriToInstanceXri((XRI3SubSegment) xdiDataDictionaryXri.getSubSegment(i))));
+				buffer2.append(Multiplicity.entitySingletonArcXri(Dictionary.dictionaryXriToInstanceXri((XRI3SubSegment) xdiDataDictionaryXri.getSubSegment(i))));
 			} else {
 
-				buffer.append(Multiplicity.attributeSingletonArcXri(Dictionary.dictionaryXriToInstanceXri((XRI3SubSegment) xdiDataDictionaryXri.getSubSegment(i))));
+				buffer2.append(Multiplicity.attributeSingletonArcXri(Dictionary.dictionaryXriToInstanceXri((XRI3SubSegment) xdiDataDictionaryXri.getSubSegment(i))));
 			}
 		}
 
-		XRI3Segment xdiDataXri = new XRI3Segment(buffer.toString());
+		XRI3Segment xdiDataXri = new XRI3Segment(buffer2.toString());
 
 		// done
 
 		if (log.isDebugEnabled()) log.debug("Mapped and converted " + personalDataXri + " to " + xdiDataXri);
 
 		return xdiDataXri;
+	}
+
+	/**
+	 * Maps and converts an XDI data XRI to a Personal data XRI.
+	 * Example: +first$!(+name) --> +(0000)$!(+(preferred_first_name)) 
+	 */
+	public XRI3Segment xdiDataXriToPersonalDataXri(XRI3Segment xdiDataXri) {
+
+		if (xdiDataXri == null) throw new NullPointerException();
+
+		// convert
+		
+		StringBuffer buffer1 = new StringBuffer();
+
+		for (int i=0; i<xdiDataXri.getNumSubSegments(); i++) {
+			
+			buffer1.append(Dictionary.instanceXriToDictionaryXri(Multiplicity.baseArcXri((XRI3SubSegment) xdiDataXri.getSubSegment(i))));
+		}
+
+		// map
+		
+		XRI3Segment xdiDataDictionaryXri = new XRI3Segment(buffer1.toString());
+		ContextNode xdiDataDictionaryContextNode = this.mappingGraph.findContextNode(xdiDataDictionaryXri, false);
+		if (xdiDataDictionaryContextNode == null) return null;
+
+		ContextNode personalDataDictionaryContextNode = Dictionary.getSynonymContextNodes(xdiDataDictionaryContextNode).next();
+		XRI3Segment personalDataDictionaryXri = personalDataDictionaryContextNode.getXri();
+		
+		// convert
+
+		StringBuilder buffer2 = new StringBuilder();
+
+		for (int i=1; i<personalDataDictionaryXri.getNumSubSegments(); i++) {
+
+			if (i + 1 < personalDataDictionaryXri.getNumSubSegments()) {
+
+				buffer2.append(Multiplicity.entitySingletonArcXri(Dictionary.dictionaryXriToInstanceXri((XRI3SubSegment) personalDataDictionaryXri.getSubSegment(i))));
+			} else {
+
+				buffer2.append(Multiplicity.attributeSingletonArcXri(Dictionary.dictionaryXriToInstanceXri((XRI3SubSegment) personalDataDictionaryXri.getSubSegment(i))));
+			}
+		}
+
+		XRI3Segment personalDataXri = new XRI3Segment(buffer2.toString());
+
+		// done
+
+		if (log.isDebugEnabled()) log.debug("Mapped and converted " + xdiDataXri + " to " + personalDataXri);
+
+		return personalDataXri;
 	}
 
 	/*
