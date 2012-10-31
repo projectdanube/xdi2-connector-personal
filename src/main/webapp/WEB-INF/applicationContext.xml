@@ -60,8 +60,8 @@
 					<property name="bootstrapLinkContract" value="true" />
 				</bean>
 				<bean class="xdi2.messaging.target.interceptor.impl.VariablesInterceptor" />
-				<bean
-					class="xdi2.messaging.target.interceptor.impl.ExpandDollarIsInterceptor" />
+				<bean class="xdi2.messaging.target.interceptor.impl.ExpandDollarIsInterceptor" />
+				<bean class="xdi2.messaging.target.interceptor.impl.UniqueDollarIsInterceptor" />
 				<bean class="xdi2.messaging.target.interceptor.impl.CheckOwnerInterceptor" />
 				<ref bean="personalContributor" />
 			</util:list>
