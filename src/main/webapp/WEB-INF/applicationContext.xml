@@ -11,8 +11,7 @@
 
 	<!-- XDI SERVLET -->
 
-	<bean id="EndpointServlet" class="xdi2.server.EndpointServlet"
-		init-method="init" destroy-method="destroy">
+	<bean id="EndpointServlet" class="xdi2.server.EndpointServlet" init-method="init" destroy-method="destroy">
 		<property name="interceptors">
 			<util:list>
 				<bean class="xdi2.server.interceptor.impl.DebugEndpointServletInterceptor" />
@@ -22,8 +21,7 @@
 
 	<!-- PERSONAL CONNECTOR SERVLET -->
 
-	<bean id="ConnectServlet" class="xdi2.connector.personal.ConnectServlet"
-		init-method="init" destroy-method="destroy">
+	<bean id="ConnectServlet" class="xdi2.connector.personal.ConnectServlet" init-method="init" destroy-method="destroy">
 		<property name="graph" ref="graph1" />
 		<property name="personalApi" ref="personalApi" />
 	</bean>
@@ -36,10 +34,19 @@
 
 	<bean id="graph1" factory-bean="graphfactory1" factory-method="openGraph" />
 
+	<bean id="personalMappingGraphfactory" class="xdi2.core.impl.wrapped.classpath.ClasspathGraphFactory">
+		<property name="classpath" value="/xdi2/connector/personal/mapping/mapping.xdi" />
+		<property name="mimeType" value="text/xdi;contexts=0;ordered=1" />
+	</bean>
+
+	<bean id="personalMappingGraph" factory-bean="personalMappingGraphfactory" factory-method="openGraph" />
+
 	<bean id="personalContributor" class="xdi2.connector.personal.contributor.PersonalContributor">
 		<property name="personalApi" ref="personalApi" />
 		<property name="personalMapping">
-			<bean class="xdi2.connector.personal.mapping.PersonalMapping" />
+			<bean class="xdi2.connector.personal.mapping.PersonalMapping">
+				<property name="mappingGraph" ref="personalMappingGraph" />
+			</bean>
 		</property>
 	</bean>
 
@@ -71,6 +78,13 @@
 				<entry key="+(https://personal.com/)" value-ref="personalContributor" />
 			</util:map>
 		</property>
+	</bean>
+
+	<!-- MESSAGING TARGET at /mapping -->
+	<!-- MessagingTarget: GraphMessagingTarget -->
+
+	<bean name="/mapping" class="xdi2.messaging.target.impl.graph.GraphMessagingTarget">
+		<property name="graph" ref="personalMappingGraph" />
 	</bean>
 
 </beans>
