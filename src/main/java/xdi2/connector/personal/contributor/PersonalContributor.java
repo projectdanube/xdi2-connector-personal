@@ -39,6 +39,7 @@ public class PersonalContributor extends AbstractContributor implements Messagin
 
 		super();
 
+		this.getContributors().addContributor(new PersonalEnabledContributor());
 		this.getContributors().addContributor(new PersonalUserContributor());
 	}
 
@@ -109,6 +110,18 @@ public class PersonalContributor extends AbstractContributor implements Messagin
 	/*
 	 * Sub-Contributors
 	 */
+
+	@ContributorXri(addresses={"$!(+enabled)"})
+	private class PersonalEnabledContributor extends AbstractContributor {
+
+		@Override
+		public boolean getContext(XRI3Segment[] contributorXris, XRI3Segment relativeContextNodeXri, XRI3Segment contextNodeXri, GetOperation operation, MessageResult messageResult, ExecutionContext executionContext) throws Xdi2MessagingException {
+
+			messageResult.getGraph().findContextNode(contextNodeXri, true).createLiteral("1");
+
+			return true;
+		}
+	}
 
 	@ContributorXri(addresses={"($$!)"})
 	private class PersonalUserContributor extends AbstractContributor {
