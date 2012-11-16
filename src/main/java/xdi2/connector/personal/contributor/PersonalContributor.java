@@ -12,7 +12,7 @@ import xdi2.connector.personal.mapping.PersonalMapping;
 import xdi2.connector.personal.util.GraphUtil;
 import xdi2.core.ContextNode;
 import xdi2.core.Graph;
-import xdi2.core.xri3.impl.XRI3Segment;
+import xdi2.core.xri3.impl.XDI3Segment;
 import xdi2.messaging.GetOperation;
 import xdi2.messaging.MessageEnvelope;
 import xdi2.messaging.MessageResult;
@@ -115,7 +115,7 @@ public class PersonalContributor extends AbstractContributor implements Messagin
 	private class PersonalEnabledContributor extends AbstractContributor {
 
 		@Override
-		public boolean getContext(XRI3Segment[] contributorXris, XRI3Segment relativeContextNodeXri, XRI3Segment contextNodeXri, GetOperation operation, MessageResult messageResult, ExecutionContext executionContext) throws Xdi2MessagingException {
+		public boolean getContext(XDI3Segment[] contributorXris, XDI3Segment relativeContextNodeXri, XDI3Segment contextNodeXri, GetOperation operation, MessageResult messageResult, ExecutionContext executionContext) throws Xdi2MessagingException {
 
 			messageResult.getGraph().findContextNode(contextNodeXri, true).createLiteral("1");
 
@@ -143,11 +143,11 @@ public class PersonalContributor extends AbstractContributor implements Messagin
 		}
 
 		@Override
-		public boolean getContext(XRI3Segment[] contributorXris, XRI3Segment relativeContextNodeXri, XRI3Segment contextNodeXri, GetOperation operation, MessageResult messageResult, ExecutionContext executionContext) throws Xdi2MessagingException {
+		public boolean getContext(XDI3Segment[] contributorXris, XDI3Segment relativeContextNodeXri, XDI3Segment contextNodeXri, GetOperation operation, MessageResult messageResult, ExecutionContext executionContext) throws Xdi2MessagingException {
 
-			XRI3Segment personalContextXri = contributorXris[contributorXris.length - 3];
-			XRI3Segment userXri = contributorXris[contributorXris.length - 2];
-			XRI3Segment personalDataXri = contributorXris[contributorXris.length - 1];
+			XDI3Segment personalContextXri = contributorXris[contributorXris.length - 3];
+			XDI3Segment userXri = contributorXris[contributorXris.length - 2];
+			XDI3Segment personalDataXri = contributorXris[contributorXris.length - 1];
 
 			log.debug("personalContextXri: " + personalContextXri + ", userXri: " + userXri + ", personalDataXri: " + personalDataXri);
 

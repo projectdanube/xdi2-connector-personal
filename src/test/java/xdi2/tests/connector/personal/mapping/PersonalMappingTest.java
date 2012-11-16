@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 import xdi2.connector.personal.mapping.PersonalMapping;
 import xdi2.core.Graph;
 import xdi2.core.impl.memory.MemoryGraphFactory;
-import xdi2.core.xri3.impl.XRI3Segment;
+import xdi2.core.xri3.impl.XDI3Segment;
 
 public class PersonalMappingTest extends TestCase {
 
@@ -27,8 +27,8 @@ public class PersonalMappingTest extends TestCase {
 
 	public void testMapping() throws Exception {
 
-		XRI3Segment personalDataXri = new XRI3Segment("+(0000)$!(+(preferred_first_name))");
-		XRI3Segment xdiDataXri = new XRI3Segment("+first$!(+name)");
+		XDI3Segment personalDataXri = new XDI3Segment("+(0000)$!(+(preferred_first_name))");
+		XDI3Segment xdiDataXri = new XDI3Segment("+first$!(+name)");
 
 		assertEquals("0000", this.personalMapping.personalDataXriToPersonalGemIdentifier(personalDataXri));
 		assertEquals("preferred_first_name", this.personalMapping.personalDataXriToPersonalFieldIdentifier(personalDataXri));

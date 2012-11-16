@@ -10,12 +10,12 @@ import xdi2.core.features.dictionary.Dictionary;
 import xdi2.core.features.multiplicity.Multiplicity;
 import xdi2.core.impl.memory.MemoryGraphFactory;
 import xdi2.core.io.XDIReaderRegistry;
-import xdi2.core.xri3.impl.XRI3Segment;
-import xdi2.core.xri3.impl.XRI3SubSegment;
+import xdi2.core.xri3.impl.XDI3Segment;
+import xdi2.core.xri3.impl.XDI3SubSegment;
 
 public class PersonalMapping {
 
-	public static final XRI3SubSegment XRI_S_PERSONAL_CONTEXT = new XRI3SubSegment("+(https://personal.com/)");
+	public static final XDI3SubSegment XRI_S_PERSONAL_CONTEXT = new XDI3SubSegment("+(https://personal.com/)");
 
 	private static final Logger log = LoggerFactory.getLogger(PersonalMapping.class);
 
@@ -47,13 +47,13 @@ public class PersonalMapping {
 	 * Converts a Personal data XRI to a native Personal gem identifier.
 	 * Example: +(0000)$!(+(preferred_first_name)) --> 0000
 	 */
-	public String personalDataXriToPersonalGemIdentifier(XRI3Segment personalDataXri) {
+	public String personalDataXriToPersonalGemIdentifier(XDI3Segment personalDataXri) {
 
 		if (personalDataXri == null) throw new NullPointerException();
 
 		// convert
 
-		String personalGemIdentifier = Dictionary.instanceXriToNativeIdentifier(Multiplicity.baseArcXri((XRI3SubSegment) personalDataXri.getSubSegment(0)));
+		String personalGemIdentifier = Dictionary.instanceXriToNativeIdentifier(Multiplicity.baseArcXri((XDI3SubSegment) personalDataXri.getSubSegment(0)));
 
 		// done
 
@@ -66,13 +66,13 @@ public class PersonalMapping {
 	 * Converts a Personal data XRI to a native Personal field identifier.
 	 * Example: +(0000)$!(+(preferred_first_name)) --> preferred_first_name
 	 */
-	public String personalDataXriToPersonalFieldIdentifier(XRI3Segment personalDataXri) {
+	public String personalDataXriToPersonalFieldIdentifier(XDI3Segment personalDataXri) {
 
 		if (personalDataXri == null) throw new NullPointerException();
 
 		// convert
 
-		String personalFieldIdentifier = Dictionary.instanceXriToNativeIdentifier(Multiplicity.baseArcXri((XRI3SubSegment) personalDataXri.getSubSegment(1)));
+		String personalFieldIdentifier = Dictionary.instanceXriToNativeIdentifier(Multiplicity.baseArcXri((XDI3SubSegment) personalDataXri.getSubSegment(1)));
 
 		// done
 
@@ -85,7 +85,7 @@ public class PersonalMapping {
 	 * Maps and converts a Personal data XRI to an XDI data XRI.
 	 * Example: +(0000)$!(+(preferred_first_name)) --> +first$!(+name)
 	 */
-	public XRI3Segment personalDataXriToXdiDataXri(XRI3Segment personalDataXri) {
+	public XDI3Segment personalDataXriToXdiDataXri(XDI3Segment personalDataXri) {
 
 		if (personalDataXri == null) throw new NullPointerException();
 
@@ -95,17 +95,17 @@ public class PersonalMapping {
 
 		for (int i=0; i<personalDataXri.getNumSubSegments(); i++) {
 			
-			buffer1.append(Dictionary.instanceXriToDictionaryXri(Multiplicity.baseArcXri((XRI3SubSegment) personalDataXri.getSubSegment(i))));
+			buffer1.append(Dictionary.instanceXriToDictionaryXri(Multiplicity.baseArcXri((XDI3SubSegment) personalDataXri.getSubSegment(i))));
 		}
 
 		// map
 
-		XRI3Segment personalDataDictionaryXri = new XRI3Segment("" + XRI_S_PERSONAL_CONTEXT + buffer1.toString());
+		XDI3Segment personalDataDictionaryXri = new XDI3Segment("" + XRI_S_PERSONAL_CONTEXT + buffer1.toString());
 		ContextNode personalDataDictionaryContextNode = this.mappingGraph.findContextNode(personalDataDictionaryXri, false);
 		if (personalDataDictionaryContextNode == null) return null;
 
 		ContextNode xdiDataDictionaryContextNode = Dictionary.getCanonicalContextNode(personalDataDictionaryContextNode);
-		XRI3Segment xdiDataDictionaryXri = xdiDataDictionaryContextNode.getXri();
+		XDI3Segment xdiDataDictionaryXri = xdiDataDictionaryContextNode.getXri();
 
 		// convert
 
@@ -115,14 +115,14 @@ public class PersonalMapping {
 
 			if (i + 1 < xdiDataDictionaryXri.getNumSubSegments()) {
 
-				buffer2.append(Multiplicity.entitySingletonArcXri(Dictionary.dictionaryXriToInstanceXri((XRI3SubSegment) xdiDataDictionaryXri.getSubSegment(i))));
+				buffer2.append(Multiplicity.entitySingletonArcXri(Dictionary.dictionaryXriToInstanceXri((XDI3SubSegment) xdiDataDictionaryXri.getSubSegment(i))));
 			} else {
 
-				buffer2.append(Multiplicity.attributeSingletonArcXri(Dictionary.dictionaryXriToInstanceXri((XRI3SubSegment) xdiDataDictionaryXri.getSubSegment(i))));
+				buffer2.append(Multiplicity.attributeSingletonArcXri(Dictionary.dictionaryXriToInstanceXri((XDI3SubSegment) xdiDataDictionaryXri.getSubSegment(i))));
 			}
 		}
 
-		XRI3Segment xdiDataXri = new XRI3Segment(buffer2.toString());
+		XDI3Segment xdiDataXri = new XDI3Segment(buffer2.toString());
 
 		// done
 
@@ -135,7 +135,7 @@ public class PersonalMapping {
 	 * Maps and converts an XDI data XRI to a Personal data XRI.
 	 * Example: +first$!(+name) --> +(0000)$!(+(preferred_first_name)) 
 	 */
-	public XRI3Segment xdiDataXriToPersonalDataXri(XRI3Segment xdiDataXri) {
+	public XDI3Segment xdiDataXriToPersonalDataXri(XDI3Segment xdiDataXri) {
 
 		if (xdiDataXri == null) throw new NullPointerException();
 
@@ -145,17 +145,17 @@ public class PersonalMapping {
 
 		for (int i=0; i<xdiDataXri.getNumSubSegments(); i++) {
 			
-			buffer1.append(Dictionary.instanceXriToDictionaryXri(Multiplicity.baseArcXri((XRI3SubSegment) xdiDataXri.getSubSegment(i))));
+			buffer1.append(Dictionary.instanceXriToDictionaryXri(Multiplicity.baseArcXri((XDI3SubSegment) xdiDataXri.getSubSegment(i))));
 		}
 
 		// map
 		
-		XRI3Segment xdiDataDictionaryXri = new XRI3Segment(buffer1.toString());
+		XDI3Segment xdiDataDictionaryXri = new XDI3Segment(buffer1.toString());
 		ContextNode xdiDataDictionaryContextNode = this.mappingGraph.findContextNode(xdiDataDictionaryXri, false);
 		if (xdiDataDictionaryContextNode == null) return null;
 
 		ContextNode personalDataDictionaryContextNode = Dictionary.getSynonymContextNodes(xdiDataDictionaryContextNode).next();
-		XRI3Segment personalDataDictionaryXri = personalDataDictionaryContextNode.getXri();
+		XDI3Segment personalDataDictionaryXri = personalDataDictionaryContextNode.getXri();
 		
 		// convert
 
@@ -165,14 +165,14 @@ public class PersonalMapping {
 
 			if (i + 1 < personalDataDictionaryXri.getNumSubSegments()) {
 
-				buffer2.append(Multiplicity.entitySingletonArcXri(Dictionary.dictionaryXriToInstanceXri((XRI3SubSegment) personalDataDictionaryXri.getSubSegment(i))));
+				buffer2.append(Multiplicity.entitySingletonArcXri(Dictionary.dictionaryXriToInstanceXri((XDI3SubSegment) personalDataDictionaryXri.getSubSegment(i))));
 			} else {
 
-				buffer2.append(Multiplicity.attributeSingletonArcXri(Dictionary.dictionaryXriToInstanceXri((XRI3SubSegment) personalDataDictionaryXri.getSubSegment(i))));
+				buffer2.append(Multiplicity.attributeSingletonArcXri(Dictionary.dictionaryXriToInstanceXri((XDI3SubSegment) personalDataDictionaryXri.getSubSegment(i))));
 			}
 		}
 
-		XRI3Segment personalDataXri = new XRI3Segment(buffer2.toString());
+		XDI3Segment personalDataXri = new XDI3Segment(buffer2.toString());
 
 		// done
 
