@@ -154,7 +154,7 @@ public class PersonalMapping {
 		ContextNode xdiDataDictionaryContextNode = this.mappingGraph.findContextNode(xdiDataDictionaryXri, false);
 		if (xdiDataDictionaryContextNode == null) return null;
 
-		ContextNode personalDataDictionaryContextNode = Dictionary.getSynonymContextNodes(xdiDataDictionaryContextNode).next();
+		ContextNode personalDataDictionaryContextNode = Dictionary.getEquivalenceContextNodes(xdiDataDictionaryContextNode).next();
 		XDI3Segment personalDataDictionaryXri = personalDataDictionaryContextNode.getXri();
 		
 		// convert
