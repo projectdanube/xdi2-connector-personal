@@ -10,7 +10,7 @@
 <body style="background-image: url('images/back.png'); background-repeat: repeat-y; margin-left: 60px;">
 
 	<div class="header">
-	<img src="images/personalcomimg.png" align="middle">&nbsp;&nbsp;&nbsp;
+	<img src="images/personal-logo.png" align="middle">&nbsp;&nbsp;&nbsp;
 	<img src="images/arrow.png" align="middle">&nbsp;&nbsp;&nbsp;
 	<img src="images/logo64.png" align="middle">&nbsp;&nbsp;&nbsp;<span id="appname">xdi2-connector-personal</span>
 	</div>
