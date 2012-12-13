@@ -151,18 +151,20 @@ public class PersonalContributor extends AbstractContributor implements Messagin
 
 			log.debug("personalContextXri: " + personalContextXri + ", userXri: " + userXri + ", personalDataXri: " + personalDataXri);
 
+			// parse identifiers
+
+			String personalGemIdentifier = PersonalContributor.this.personalMapping.personalDataXriToPersonalGemIdentifier(personalDataXri);
+			String personalFieldIdentifier = PersonalContributor.this.personalMapping.personalDataXriToPersonalFieldIdentifier(personalDataXri);
+			if (personalGemIdentifier == null) return false;
+			if (personalFieldIdentifier == null) return false;
+
+			log.debug("personalGemIdentifier: " + personalGemIdentifier + ", personalFieldIdentifier: " + personalFieldIdentifier);
+			
 			// retrieve the Personal value
 
 			String personalValue = null;
 
 			try {
-
-				String personalGemIdentifier = PersonalContributor.this.personalMapping.personalDataXriToPersonalGemIdentifier(personalDataXri);
-				String personalFieldIdentifier = PersonalContributor.this.personalMapping.personalDataXriToPersonalFieldIdentifier(personalDataXri);
-				if (personalGemIdentifier == null) return false;
-				if (personalFieldIdentifier == null) return false;
-
-				log.debug("personalGemIdentifier: " + personalGemIdentifier + ", personalFieldIdentifier: " + personalFieldIdentifier);
 
 				String accessToken = GraphUtil.retrieveAccessToken(PersonalContributor.this.getTokenGraph(), userXri);
 				if (accessToken == null) throw new Exception("No access token.");
