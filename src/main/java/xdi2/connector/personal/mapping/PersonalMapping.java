@@ -16,7 +16,7 @@ import xdi2.core.xri3.impl.XDI3SubSegment;
 
 public class PersonalMapping {
 
-	public static final XDI3SubSegment XRI_S_PERSONAL_CONTEXT = new XDI3SubSegment("+(https://personal.com/)");
+	public static final XDI3SubSegment XRI_S_PERSONAL_CONTEXT = XDI3SubSegment.create("+(https://personal.com/)");
 
 	private static final Logger log = LoggerFactory.getLogger(PersonalMapping.class);
 
@@ -101,7 +101,7 @@ public class PersonalMapping {
 
 		// map
 
-		XDI3Segment personalDataDictionaryXri = new XDI3Segment("" + XRI_S_PERSONAL_CONTEXT + buffer1.toString());
+		XDI3Segment personalDataDictionaryXri = XDI3Segment.create("" + XRI_S_PERSONAL_CONTEXT + buffer1.toString());
 		ContextNode personalDataDictionaryContextNode = this.mappingGraph.findContextNode(personalDataDictionaryXri, false);
 		if (personalDataDictionaryContextNode == null) return null;
 
@@ -123,7 +123,7 @@ public class PersonalMapping {
 			}
 		}
 
-		XDI3Segment xdiDataXri = new XDI3Segment(buffer2.toString());
+		XDI3Segment xdiDataXri = XDI3Segment.create(buffer2.toString());
 
 		// done
 
@@ -151,7 +151,7 @@ public class PersonalMapping {
 
 		// map
 		
-		XDI3Segment xdiDataDictionaryXri = new XDI3Segment(buffer1.toString());
+		XDI3Segment xdiDataDictionaryXri = XDI3Segment.create(buffer1.toString());
 		ContextNode xdiDataDictionaryContextNode = this.mappingGraph.findContextNode(xdiDataDictionaryXri, false);
 		if (xdiDataDictionaryContextNode == null) return null;
 
@@ -173,7 +173,7 @@ public class PersonalMapping {
 			}
 		}
 
-		XDI3Segment personalDataXri = new XDI3Segment(buffer2.toString());
+		XDI3Segment personalDataXri = XDI3Segment.create(buffer2.toString());
 
 		// done
 
