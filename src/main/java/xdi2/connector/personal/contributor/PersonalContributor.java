@@ -12,7 +12,7 @@ import xdi2.connector.personal.mapping.PersonalMapping;
 import xdi2.connector.personal.util.GraphUtil;
 import xdi2.core.ContextNode;
 import xdi2.core.Graph;
-import xdi2.core.xri3.impl.XDI3Segment;
+import xdi2.core.xri3.XDI3Segment;
 import xdi2.messaging.GetOperation;
 import xdi2.messaging.MessageEnvelope;
 import xdi2.messaging.MessageResult;

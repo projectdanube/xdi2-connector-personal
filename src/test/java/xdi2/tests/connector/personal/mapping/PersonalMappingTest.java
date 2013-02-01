@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 import xdi2.connector.personal.mapping.PersonalMapping;
 import xdi2.core.Graph;
 import xdi2.core.impl.memory.MemoryGraphFactory;
-import xdi2.core.xri3.impl.XDI3Segment;
+import xdi2.core.xri3.XDI3Segment;
 
 public class PersonalMappingTest extends TestCase {
 
