@@ -8,7 +8,9 @@ import xdi2.core.Graph;
 import xdi2.core.exceptions.Xdi2RuntimeException;
 import xdi2.core.features.dictionary.Dictionary;
 import xdi2.core.features.equivalence.Equivalence;
-import xdi2.core.features.multiplicity.Multiplicity;
+import xdi2.core.features.nodetypes.XdiAbstractSubGraph;
+import xdi2.core.features.nodetypes.XdiAttributeSingleton;
+import xdi2.core.features.nodetypes.XdiEntitySingleton;
 import xdi2.core.impl.memory.MemoryGraphFactory;
 import xdi2.core.io.XDIReaderRegistry;
 import xdi2.core.xri3.XDI3Segment;
@@ -54,7 +56,7 @@ public class PersonalMapping {
 
 		// convert
 
-		String personalGemIdentifier = Dictionary.instanceXriToNativeIdentifier(Multiplicity.baseArcXri(personalDataXri.getSubSegment(0)));
+		String personalGemIdentifier = Dictionary.instanceXriToNativeIdentifier(XdiAbstractSubGraph.getBaseArcXri(personalDataXri.getSubSegment(0)));
 
 		// done
 
@@ -73,7 +75,7 @@ public class PersonalMapping {
 
 		// convert
 
-		String personalFieldIdentifier = Dictionary.instanceXriToNativeIdentifier(Multiplicity.baseArcXri(personalDataXri.getSubSegment(1)));
+		String personalFieldIdentifier = Dictionary.instanceXriToNativeIdentifier(XdiAbstractSubGraph.getBaseArcXri(personalDataXri.getSubSegment(1)));
 
 		// done
 
@@ -96,7 +98,7 @@ public class PersonalMapping {
 
 		for (int i=0; i<personalDataXri.getNumSubSegments(); i++) {
 			
-			buffer1.append(Dictionary.instanceXriToDictionaryXri(Multiplicity.baseArcXri(personalDataXri.getSubSegment(i))));
+			buffer1.append(Dictionary.instanceXriToDictionaryXri(XdiAbstractSubGraph.getBaseArcXri(personalDataXri.getSubSegment(i))));
 		}
 
 		// map
@@ -116,10 +118,10 @@ public class PersonalMapping {
 
 			if (i + 1 < xdiDataDictionaryXri.getNumSubSegments()) {
 
-				buffer2.append(Multiplicity.entitySingletonArcXri(Dictionary.dictionaryXriToInstanceXri(xdiDataDictionaryXri.getSubSegment(i))));
+				buffer2.append(XdiEntitySingleton.createArcXri(Dictionary.dictionaryXriToInstanceXri(xdiDataDictionaryXri.getSubSegment(i))));
 			} else {
 
-				buffer2.append(Multiplicity.attributeSingletonArcXri(Dictionary.dictionaryXriToInstanceXri(xdiDataDictionaryXri.getSubSegment(i))));
+				buffer2.append(XdiAttributeSingleton.createArcXri(Dictionary.dictionaryXriToInstanceXri(xdiDataDictionaryXri.getSubSegment(i))));
 			}
 		}
 
@@ -146,7 +148,7 @@ public class PersonalMapping {
 
 		for (int i=0; i<xdiDataXri.getNumSubSegments(); i++) {
 			
-			buffer1.append(Dictionary.instanceXriToDictionaryXri(Multiplicity.baseArcXri(xdiDataXri.getSubSegment(i))));
+			buffer1.append(Dictionary.instanceXriToDictionaryXri(XdiAbstractSubGraph.getBaseArcXri(xdiDataXri.getSubSegment(i))));
 		}
 
 		// map
@@ -166,10 +168,10 @@ public class PersonalMapping {
 
 			if (i + 1 < personalDataDictionaryXri.getNumSubSegments()) {
 
-				buffer2.append(Multiplicity.entitySingletonArcXri(Dictionary.dictionaryXriToInstanceXri(personalDataDictionaryXri.getSubSegment(i))));
+				buffer2.append(XdiEntitySingleton.createArcXri(Dictionary.dictionaryXriToInstanceXri(personalDataDictionaryXri.getSubSegment(i))));
 			} else {
 
-				buffer2.append(Multiplicity.attributeSingletonArcXri(Dictionary.dictionaryXriToInstanceXri(personalDataDictionaryXri.getSubSegment(i))));
+				buffer2.append(XdiAttributeSingleton.createArcXri(Dictionary.dictionaryXriToInstanceXri(personalDataDictionaryXri.getSubSegment(i))));
 			}
 		}
 
