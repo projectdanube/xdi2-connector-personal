@@ -1,7 +1,7 @@
 <a href="http://projectdanube.org/" target="_blank"><img src="http://projectdanube.github.com/xdi2/images/projectdanube_logo.png" align="right"></a>
 <img src="http://projectdanube.github.com/xdi2/images/logo64.png"><br>
 
-This is a connector module for the [XDI2](http://github.com/projectdanube/xdi2) server.
+This is a connector plugin for the [XDI2](http://github.com/projectdanube/xdi2) server.
 
 It can map personal data from the [Personal.com API](http://developer.personal.com/faq) to XDI. 
 
@@ -19,26 +19,26 @@ After that, just run
 
     mvn clean install
 
-To build all components.
+To build the XDI2 plugin.
 
-### How to run
+### How to run as standalone web application
 
-    mvn jetty:run
+    mvn clean install jetty:run -P war
 
 Then access the web interface at
 
 	http://localhost:9092/
 
+Or access the server's status page at
+
+	http://localhost:9092/xdi
+
 Or use an XDI client to send XDI messages to
 
     http://localhost:9092/xdi/personal
 
-### How to build as XDI2 plugin
-
-Run
-
-    mvn clean install package -P xdi2-plugin
-
 ### Community
 
 Google Group: http://groups.google.com/group/xdi2
+
+IRC: irc://irc.freenode.net:6667/xdi
